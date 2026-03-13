@@ -1,0 +1,44 @@
+## .NET / ASP.NET Core
+
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options directory
+.vs/
+.vscode/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# Publish output
+publish/
+out/
+
+# Logs
+*.log
+logs/
+
+# Environment / secrets
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+*.env
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# JetBrains Rider
+.idea/
+*.sln.iml

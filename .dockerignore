@@ -1,0 +1,33 @@
+# .NET build output
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+dockerfile*
+docker-compose*
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets / local config
+appsettings.Development.json
+*.env
+.env
+
+# Docs
+*.md
