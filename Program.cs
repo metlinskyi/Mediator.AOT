@@ -1,3 +1,5 @@
+global using Api.Middleware;
+
 using Api.Handlers;
 
 var builder = WebApplication.CreateSlimBuilder(args);

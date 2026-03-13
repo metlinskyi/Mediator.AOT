@@ -1,6 +1,4 @@
-using Api.Middleware;
-
-namespace Api.Handlers;
+namespace Api.Handlers.Todo;
 
 public record Todo(
     int Id, 

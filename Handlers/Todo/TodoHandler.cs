@@ -1,6 +1,4 @@
-using Api.Middleware;
-
-namespace  Api.Handlers;
+namespace Api.Handlers.Todo;
 /// <summary>
 /// A sample handler for the Todo API. 
 /// </summary>
