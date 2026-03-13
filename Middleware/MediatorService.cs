@@ -2,21 +2,25 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Api.Middleware;
 
-public sealed class MediatorService
+public sealed class MediatorService : 
+    Dictionary<string, Func<IServiceProvider, HttpContext, CancellationToken, Task>>, 
+    IMediator
 {
-    private readonly Dictionary<string, Func<HttpContext, CancellationToken, Task>> _handlers =
-        new(StringComparer.OrdinalIgnoreCase);
+    public MediatorService() : base(StringComparer.OrdinalIgnoreCase)
+    {
+    }
 
-    public void Register<TRequest, TResponse>(
-        IRequestHandler<TRequest, TResponse> handler,
+    public void Register<TRequest, TResponse, THandler>(
         JsonTypeInfo<TRequest> requestTypeInfo,
         JsonTypeInfo<TResponse> responseTypeInfo)
         where TRequest : IRequest
         where TResponse : IResponse
+        where THandler : IRequestHandler<TRequest, TResponse>
     {
         var className = typeof(TRequest).Name;
-        _handlers[className] = async (ctx, ct) =>
+        this[className] = async (sp, ctx, ct) =>
         {
+            var handler = sp.GetRequiredService<THandler>();
             var request = await ctx.Request.ReadFromJsonAsync(requestTypeInfo, ct);
             if (request is null)
             {
@@ -30,12 +34,12 @@ public sealed class MediatorService
 
     public async Task Send(string className, HttpContext ctx, CancellationToken ct)
     {
-        if (!_handlers.TryGetValue(className, out var handle))
+        if (!TryGetValue(className, out var handle))
         {
             ctx.Response.StatusCode = StatusCodes.Status404NotFound;
             await ctx.Response.WriteAsync($"No handler registered for '{className}'.", ct);
             return;
         }
-        await handle(ctx, ct);
+        await handle(ctx.RequestServices, ctx, ct);
     }
 }

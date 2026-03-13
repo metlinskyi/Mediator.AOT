@@ -13,11 +13,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.Services.AddOpenApi();
 
-var mediator = new MediatorService();
-mediator.Register(new HelloHandler(), AppJsonSerializerContext.Default.HelloRequest, AppJsonSerializerContext.Default.HelloResponse);
-mediator.Register(new TodoHandler(), AppJsonSerializerContext.Default.TodoRequest, AppJsonSerializerContext.Default.Todo);
+builder.Services.AddScoped<HelloHandler>();
+builder.Services.AddScoped<TodoHandler>();
+builder.Services.AddSingleton<IMediator, MediatorService>();
 
 var app = builder.Build();
+
+var mediator = app.Services.GetRequiredService<IMediator>();
+mediator.Register<HelloRequest, HelloResponse, HelloHandler>(AppJsonSerializerContext.Default.HelloRequest, AppJsonSerializerContext.Default.HelloResponse);
+mediator.Register<TodoRequest, Todo, TodoHandler>(AppJsonSerializerContext.Default.TodoRequest, AppJsonSerializerContext.Default.Todo);
 
 if (app.Environment.IsDevelopment())
 {
