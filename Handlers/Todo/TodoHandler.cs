@@ -2,11 +2,11 @@ namespace Api.Handlers.Todo;
 /// <summary>
 /// A sample handler for the Todo API. 
 /// </summary>
-internal class TodoHandler : IRequestHandler<TodoRequest, Todo>
-{
-    public Task<Todo> Handle(TodoRequest request, CancellationToken cancellationToken)
+internal class TodoHandler : IRequestHandler<TodoRequest, TodoEntity>
+{   
+    public Task<TodoEntity> Handle(TodoRequest request, CancellationToken cancellationToken)
     {
-        Todo[] sampleTodos =
+        TodoEntity[] sampleTodos =
         [
             new(1, "Walk the dog"),
             new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
