@@ -9,7 +9,8 @@ public sealed class MediatorService :
     IMediator
 {
     private readonly IServiceCollection services;
-
+    public ISet<Type> RequestTypes { get; } = new HashSet<Type>();
+    public ISet<Type> ResponseTypes { get; } = new HashSet<Type>();
     public List<JsonSerializerContext> JsonSerializerContexts { get; } = new List<JsonSerializerContext>();    
 
     public MediatorService(IServiceCollection services) : base(StringComparer.OrdinalIgnoreCase)
@@ -28,13 +29,17 @@ public sealed class MediatorService :
     {
         if(!JsonSerializerContexts.Contains(context))
             JsonSerializerContexts.Add(context);
-
+        
         services.AddScoped(typeof(IRequestHandler<TRequest, TResponse>), typeof(THandler));
 
         var requestTypeInfo = context.GetTypeInfo(typeof(TRequest)) as JsonTypeInfo<TRequest> 
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
         var responseTypeInfo = context.GetTypeInfo(typeof(TResponse)) as JsonTypeInfo<TResponse>
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TResponse).FullName}.");
+
+
+        RequestTypes.Add(typeof(TRequest));
+        ResponseTypes.Add(typeof(TResponse));
 
         var className = typeof(TRequest).Name;
         this[className] = async (sp, ctx, ct) =>

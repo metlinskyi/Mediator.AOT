@@ -1,6 +1,7 @@
-using Api.Middleware.Schema;
 
 namespace Api.Middleware;
+
+    using Schema;
 
 public static class MediatorHelper
 {
@@ -10,8 +11,6 @@ public static class MediatorHelper
         services.AddSingleton<IMediator>(mediator);
         configure?.Invoke(mediator);
         
-        mediator.Register<MediatorSchemaRequest, MediatorSchema, MediatorSchemaHandler>(MediatorContext.Default);
-
         services.ConfigureHttpJsonOptions(options =>
         {
             mediator.JsonSerializerContexts.ForEach(context => 
@@ -26,9 +25,6 @@ public static class MediatorHelper
         configure?.Invoke(options);    
 
         app.MapPost(options.SendPattern, async (string className, HttpContext ctx, CancellationToken ct) =>
-            await mediator.Send(className, ctx, ct));
-
-        app.MapGet(options.SchemaPattern, async (HttpContext ctx, CancellationToken ct) =>
-            await mediator.Send(typeof(MediatorSchemaRequest).Name, ctx, ct));           
+            await mediator.Send(className, ctx, ct));      
     }
 }
