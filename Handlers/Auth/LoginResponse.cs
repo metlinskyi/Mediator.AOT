@@ -1,3 +1,5 @@
+using System.Security;
+
 namespace Api.Handlers.Auth;
 
-public record LoginResponse(string Token) : IResponse;
+public record LoginResponse(SecureString Token) : IResponse;

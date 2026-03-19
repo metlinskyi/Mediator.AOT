@@ -6,13 +6,12 @@ namespace Api.Middleware;
 
 public sealed class MediatorService : 
     Dictionary<string, Func<IServiceProvider, HttpContext, CancellationToken, Task>>, 
-    IMediator
+    IMediator, IMediatorRegister
 {
     private readonly IServiceCollection services;
-    public ISet<Type> RequestTypes { get; } = new HashSet<Type>();
-    public ISet<Type> ResponseTypes { get; } = new HashSet<Type>();
-    public List<JsonSerializerContext> JsonSerializerContexts { get; } = new List<JsonSerializerContext>();    
-
+    private readonly List<IMediatorHandlerInfo> handlerInfos = new List<IMediatorHandlerInfo>();
+    public List<JsonSerializerContext> JsonSerializerContexts { get; } = new List<JsonSerializerContext>();
+    public IEnumerable<IMediatorHandlerInfo> HandlerInfos => handlerInfos;
     public MediatorService(IServiceCollection services) : base(StringComparer.OrdinalIgnoreCase)
     {
         this.services = services;
@@ -36,10 +35,9 @@ public sealed class MediatorService :
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
         var responseTypeInfo = context.GetTypeInfo(typeof(TResponse)) as JsonTypeInfo<TResponse>
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TResponse).FullName}.");
-
-
-        RequestTypes.Add(typeof(TRequest));
-        ResponseTypes.Add(typeof(TResponse));
+            
+        var info = new MediatorHandlerInfo(typeof(TRequest), typeof(TResponse));
+        handlerInfos.Add(info);
 
         var className = typeof(TRequest).Name;
         this[className] = async (sp, ctx, ct) =>

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Api.Services.Security;
 
 namespace Api.Handlers;
 
@@ -10,4 +11,17 @@ namespace Api.Handlers;
 [JsonSerializable(typeof(Todo.TodoEntity[]))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
+}
+
+public static class Extensions
+{
+    public static IServiceCollection AddJsonOptions(this IServiceCollection services) 
+    {
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new SecureStringConverter());
+        });
+
+        return services;
+    }
 }
