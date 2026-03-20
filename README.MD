@@ -46,6 +46,13 @@ dotnet run --project Api/Api.csproj
 By default (see `Api/Properties/launchSettings.json`), the app listens on:
 - `http://localhost:8080`
 
+
+## Docker
+```bash
+docker build -t aot-api -f ".dockerfile" .
+docker run -p 8080:8080 aot-api
+```
+
 ## Mediator Endpoint
 
 `MapMediator()` uses this default route pattern:

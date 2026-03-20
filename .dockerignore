@@ -31,3 +31,5 @@ appsettings.Development.json
 
 # Docs
 *.md
+
+Tests/
