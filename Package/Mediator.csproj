@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Mediator.AOT</AssemblyName>
+    <PackageId>Mediator.AOT</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Roman Metlinskyi</Authors>
+    <Description>AOT-optimized version of the Mediator library.</Description>
+    <RootNamespace>Mediator</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

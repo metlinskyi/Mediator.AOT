@@ -1,7 +1,9 @@
 
-namespace Api.Middleware;
 
-    using Schema;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+namespace Mediator.Middleware;
 
 public static class MediatorHelper
 {

@@ -1,8 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Microsoft.AspNetCore.Http;
 
-namespace Api.Middleware;
+namespace Mediator.Middleware;
 
 public sealed class MediatorService : 
     Dictionary<string, Func<IServiceProvider, HttpContext, CancellationToken, Task>>, 

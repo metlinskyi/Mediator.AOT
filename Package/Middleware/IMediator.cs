@@ -1,4 +1,6 @@
-namespace Api.Middleware;
+using Microsoft.AspNetCore.Http;
+
+namespace Mediator.Middleware;
 
 public interface IMediator 
 {

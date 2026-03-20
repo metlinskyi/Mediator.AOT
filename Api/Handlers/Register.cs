@@ -2,6 +2,7 @@ namespace Api.Handlers;
 
 using Api.Handlers.Auth;
 using Hello;
+using Mediator.Middleware;
 using Todo;
 public static class Register
 {

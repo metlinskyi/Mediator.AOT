@@ -1,4 +1,4 @@
-namespace Api.Middleware;
+namespace Mediator.Handlers;
 /// <summary>
 /// Marker interface for requests.
 /// </summary>

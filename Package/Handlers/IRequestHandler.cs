@@ -1,4 +1,4 @@
-namespace Api.Middleware;
+namespace Mediator.Handlers;
 /// <summary>
 /// Marker interface for request handlers. 
 /// This is used to register all request handlers in the DI container.

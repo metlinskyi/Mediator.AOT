@@ -1,11 +1,13 @@
-global using Api.Middleware;
+global using Mediator.Handlers;
 
 using System.Text;
 using Api.Handlers;
 using Api.Services;
 using Api.Services.Security;
+using Mediator.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var config = builder.Configuration;
@@ -29,7 +31,6 @@ services.AddMediator(mediator =>
                         var response = await context.GetOrCreateSchemaAsync(info.ResponseType, null, ct);
                         document.AddComponent(info.ResponseType.Name, response); 
                     });
-
             });
         })
         .AddSingleton<ISecurityConfiguration>(new SecurityConfiguration(

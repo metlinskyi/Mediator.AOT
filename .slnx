@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Api/">
+    <Project Path="Api/Api.csproj" />
+  </Folder>
+  <Folder Name="/Package/">
+    <Project Path="Package/Mediator.csproj" />
+  </Folder>
+  <Project Path="Tests/Tests.csproj" />
+</Solution>

@@ -1,4 +1,4 @@
-namespace Api.Middleware;
+namespace Mediator.Middleware;
 
 public class MediatorOptions
 {
