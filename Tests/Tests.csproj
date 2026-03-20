@@ -6,6 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <AssemblyName>Tests</AssemblyName>
+    <Version>1.0.0</Version>
+    <Authors>Roman Metlinskyi</Authors>
+    <Description>Unit tests for the Mediator library.</Description>
+    <RootNamespace>Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
