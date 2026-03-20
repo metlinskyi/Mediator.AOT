@@ -1,25 +1,24 @@
 namespace Mediator.Handlers;
+
 /// <summary>
-/// Marker interface for request handlers. 
-/// This is used to register all request handlers in the DI container.
+/// Defines a handler for a request
 /// </summary>
-public interface IRequestHandler
+public interface IRequestHandler<in TRequest, TResponse>
 {
-}
-/// <summary>
-/// Interface for handling requests.
-/// </summary>
-public interface IRequestHandler<in TRequest, TResponse> : IRequestHandler
-    where TRequest : IRequest
-    where TResponse : IResponse
-{   
+    /// <summary>
+    /// Handles a request
+    /// </summary>
     Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 }
+
 /// <summary>
-/// Interface for handling requests that do not return a response.
+/// Defines a handler for a request with a void response.
 /// </summary>
-public interface IRequestHandler<in TRequest> : IRequestHandler
-    where TRequest : IRequest
-{   
+/// <typeparam name="TRequest">The type of request being handled</typeparam>
+public interface IRequestHandler<in TRequest>
+{
+    /// <summary>
+    /// Handles a request
+    /// </summary>
     Task Handle(TRequest request, CancellationToken cancellationToken);
 }

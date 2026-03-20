@@ -23,8 +23,6 @@ public sealed class MediatorService :
         TResponse, 
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(
         JsonSerializerContext context)
-        where TRequest : IRequest
-        where TResponse : IResponse
         where THandler : IRequestHandler<TRequest, TResponse>
     {
         if(!JsonSerializerContexts.Contains(context))
