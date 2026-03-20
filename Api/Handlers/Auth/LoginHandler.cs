@@ -2,7 +2,7 @@ using Api.Services.Security;
 
 namespace Api.Handlers.Auth;
 
-internal class LoginHandler(
+public class LoginHandler(
     ILogger<LoginHandler> logger,
     ISecurityService securityService
     ) : IRequestHandler<LoginRequest, LoginResponse>

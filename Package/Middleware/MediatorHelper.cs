@@ -1,5 +1,3 @@
-
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -7,7 +5,8 @@ namespace Mediator.Middleware;
 
 public static class MediatorHelper
 {
-    public static IServiceCollection AddMediator(this IServiceCollection services, Action<IMediatorRegister>? configure = null)
+    public static IServiceCollection AddMediator(this IServiceCollection services, 
+        Action<IMediatorRegister>? configure = null)
     {
         var mediator = new MediatorService(services);
         services.AddSingleton<IMediator>(mediator);
@@ -23,22 +22,30 @@ public static class MediatorHelper
         return services;
     }
 
-    public static void MapMediator(this WebApplication app, Action<MediatorOptions>? configure = null)
+    public static void MapMediator(this WebApplication app, 
+        Action<MediatorOptions>? configure = null)
     {
         var mediator = app.Services.GetRequiredService<IMediator>();
         var options = new MediatorOptions();
         configure?.Invoke(options);    
 
-        app.MapPost(options.SendPattern, async (string className, HttpContext ctx, CancellationToken ct) =>
-            await mediator.Send(className, ctx, ct));      
-    }
-
-    public static async Task AddSchema(this IMediatorRegister register, Func<IMediatorHandlerInfo, Task> configure)
-    {
-        foreach (var info in register.HandlerInfos)
+        app.MapPost(options.SendPattern, async ctx =>
         {
-            await configure(info);
-        } 
+            var className = ctx.Request.RouteValues["className"]?.ToString();
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await ctx.Response.WriteAsync("Route parameter 'className' is required.", ctx.RequestAborted);
+                return;
+            }
+
+            await mediator.Send(className, ctx, ctx.RequestAborted);
+        });
     }
 
+    public static async Task AddSchema(this IMediatorRegister register, 
+        Func<MediatorOptions, IEnumerable<IMediatorHandlerInfo>, Task> configure)
+    {
+        await configure(register.Options, register.HandlerInfos);
+    }       
 }

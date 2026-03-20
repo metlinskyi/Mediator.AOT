@@ -1,6 +1,6 @@
 namespace Api.Handlers.Hello;
 
-internal class HelloHandler(ILogger<HelloHandler> logger) : IRequestHandler<HelloRequest, HelloResponse>
+public class HelloHandler(ILogger<HelloHandler> logger) : IRequestHandler<HelloRequest, HelloResponse>
 {
     public Task<HelloResponse> Handle(HelloRequest request, CancellationToken cancellationToken)
     {

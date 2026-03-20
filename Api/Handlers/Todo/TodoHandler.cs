@@ -2,7 +2,7 @@ namespace Api.Handlers.Todo;
 /// <summary>
 /// A sample handler for the Todo API. 
 /// </summary>
-internal class TodoHandler : IRequestHandler<TodoRequest, TodoEntity>
+public class TodoHandler : IRequestHandler<TodoRequest, TodoEntity>
 {   
     public Task<TodoEntity> Handle(TodoRequest request, CancellationToken cancellationToken)
     {

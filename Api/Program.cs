@@ -22,14 +22,27 @@ services.AddMediator(mediator =>
         {
             options.AddDocumentTransformer(async (document, context, ct) =>
             {
+                 
                 await context.ApplicationServices
                     .GetRequiredService<IMediatorRegister>()
-                    .AddSchema(async (info) =>
-                    {
-                        var request = await context.GetOrCreateSchemaAsync(info.RequestType, null, ct);
-                        document.AddComponent(info.RequestType.Name, request); 
-                        var response = await context.GetOrCreateSchemaAsync(info.ResponseType, null, ct);
-                        document.AddComponent(info.ResponseType.Name, response); 
+                    .AddSchema(async (options, infos) =>
+                    {   
+                        var path = new Microsoft.OpenApi.OpenApiPathItem();
+                        path.AddOperation(HttpMethod.Post, new Microsoft.OpenApi.OpenApiOperation
+                        {
+                        });
+                        document.Paths.TryAdd(options.SendPattern, path);
+
+                        foreach (var info in infos)
+                        {        
+                            var request = await context.GetOrCreateSchemaAsync(info.RequestType, null, ct);
+                            request.DependentRequired = new Dictionary<string, HashSet<string>>{
+                                {info.ResponseType.Name, new HashSet<string>()}
+                            };   
+                            var response = await context.GetOrCreateSchemaAsync(info.ResponseType, null, ct);
+                            document.AddComponent(info.RequestType.Name, request); 
+                            document.AddComponent(info.ResponseType.Name, response); 
+                        }
                     });
             });
         })

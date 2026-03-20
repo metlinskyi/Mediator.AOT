@@ -13,23 +13,21 @@ public sealed class MediatorService :
     private readonly List<IMediatorHandlerInfo> handlerInfos = new List<IMediatorHandlerInfo>();
     public List<JsonSerializerContext> JsonSerializerContexts { get; } = new List<JsonSerializerContext>();
     public IEnumerable<IMediatorHandlerInfo> HandlerInfos => handlerInfos;
+    public MediatorOptions Options { get; } = new MediatorOptions();
     public MediatorService(IServiceCollection services) : base(StringComparer.OrdinalIgnoreCase)
     {
         this.services = services;
     }
 
-    public void Register<
-        TRequest, 
-        TResponse, 
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(
-        JsonSerializerContext context)
+    public void Register<TRequest, TResponse,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(JsonSerializerContext context)
         where THandler : IRequestHandler<TRequest, TResponse>
     {
         if(!JsonSerializerContexts.Contains(context))
             JsonSerializerContexts.Add(context);
         
         services.AddScoped(typeof(IRequestHandler<TRequest, TResponse>), typeof(THandler));
-
+        
         var requestTypeInfo = context.GetTypeInfo(typeof(TRequest)) as JsonTypeInfo<TRequest> 
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
         var responseTypeInfo = context.GetTypeInfo(typeof(TResponse)) as JsonTypeInfo<TResponse>
@@ -48,7 +46,9 @@ public sealed class MediatorService :
                 ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
                 return;
             }
+
             var response = await handler.Handle(request, ct);
+            ctx.Response.Headers.TryAdd("Response-Type", typeof(TResponse).Name);
             await ctx.Response.WriteAsJsonAsync(response, responseTypeInfo, cancellationToken: ct);
         };
     }
