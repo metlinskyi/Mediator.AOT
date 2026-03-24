@@ -1,3 +1,4 @@
+using System.Security;
 using System.Text.Json.Serialization;
 using Api.Services.Security;
 
@@ -6,6 +7,7 @@ namespace Api.Handlers;
 [JsonSerializable(typeof(Application.LoginRequest))]
 [JsonSerializable(typeof(Application.LoginResponse))]
 [JsonSerializable(typeof(Application.LogoutRequest))]
+[JsonSerializable(typeof(SecureString))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }
