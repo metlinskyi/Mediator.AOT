@@ -3,12 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Mediator.Middleware;
 
-public interface IMediatorRegister
+public interface IMediatorRegister : IEnumerable<IMediatorHandlerInfo>
 {
       MediatorOptions Options { get; }
       
-      IEnumerable<IMediatorHandlerInfo> HandlerInfos { get; }
-
       void Register<TRequest, TResponse,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(
             JsonSerializerContext context)

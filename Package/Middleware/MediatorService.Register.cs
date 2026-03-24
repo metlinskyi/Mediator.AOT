@@ -108,5 +108,15 @@ internal sealed partial class MediatorService : IMediatorRegister
             await handler.Handle(request, ct);
             ctx.Response.StatusCode = StatusCodes.Status204NoContent;
         };
-    } 
+    }
+
+    IEnumerator<IMediatorHandlerInfo> IEnumerable<IMediatorHandlerInfo>.GetEnumerator()
+    {
+        return handlerInfos.GetEnumerator();
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+        return handlerInfos.GetEnumerator();
+    }
 }

@@ -59,6 +59,6 @@ public static class MediatorHelper
     public static async Task AddSchema(this IMediatorRegister register, 
         Func<MediatorOptions, IEnumerable<IMediatorHandlerInfo>, Task> configure)
     {
-        await configure(register.Options, register.HandlerInfos);
+        await configure(register.Options, register);
     }       
 }
