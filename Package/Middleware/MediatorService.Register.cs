@@ -41,7 +41,7 @@ internal sealed partial class MediatorService : IMediatorRegister
         var responseTypeInfo = context.GetTypeInfo(typeof(TResponse)) as JsonTypeInfo<TResponse>
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TResponse).FullName}.");
             
-        var info = new MediatorHandlerInfo(typeof(TRequest), typeof(TResponse))
+        var info = new MediatorHandlerInfo(HttpMethod.Post, typeof(TRequest), typeof(TResponse))
         {
             AuthorizeData = typeof(THandler)
                 .GetCustomAttributes(inherit: true)
@@ -50,7 +50,7 @@ internal sealed partial class MediatorService : IMediatorRegister
         };
         handlerInfos.Add(info);
                
-        var key = (HttpMethod.Post, typeof(TRequest).Name.ToUpper());
+        var key = info.CreateKey();
         this[key] = async (sp, ctx, ct) =>
         {
             if (!await EnsureAuthorizedAsync<THandler>(ctx, info))
@@ -65,6 +65,7 @@ internal sealed partial class MediatorService : IMediatorRegister
             }
 
             var response = await handler.Handle(request, ct);
+            ctx.Response.StatusCode = StatusCodes.Status200OK;
             ctx.Response.Headers.TryAdd("Response-Type", typeof(TResponse).Name);
             await ctx.Response.WriteAsJsonAsync(response, responseTypeInfo, cancellationToken: ct);
         };
@@ -81,7 +82,7 @@ internal sealed partial class MediatorService : IMediatorRegister
         var requestTypeInfo = context.GetTypeInfo(typeof(TRequest)) as JsonTypeInfo<TRequest> 
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
  
-        var info = new MediatorHandlerInfo(typeof(TRequest))
+        var info = new MediatorHandlerInfo(HttpMethod.Put, typeof(TRequest))
         {
             AuthorizeData = typeof(THandler)
                 .GetCustomAttributes(inherit: true)
@@ -90,7 +91,7 @@ internal sealed partial class MediatorService : IMediatorRegister
         };
         handlerInfos.Add(info);
 
-        var key = (HttpMethod.Put, typeof(TRequest).Name.ToUpper());
+        var key = info.CreateKey();
         this[key] = async (sp, ctx, ct) =>
         {
             if (!await EnsureAuthorizedAsync<THandler>(ctx, info))
