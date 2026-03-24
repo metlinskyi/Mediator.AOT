@@ -49,8 +49,8 @@ By default (see `Api/Properties/launchSettings.json`), the app listens on:
 
 ## Docker
 ```bash
-docker build -t aot-api -f ".dockerfile" .
-docker run -p 8080:8080 aot-api
+docker build -t api -f ".dockerfile" .
+docker run -p 8080:8080 api
 ```
 
 ## Mediator Endpoint

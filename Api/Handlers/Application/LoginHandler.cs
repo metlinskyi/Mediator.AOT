@@ -1,5 +1,4 @@
 using Api.Services.Security;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Handlers.Application;
 
