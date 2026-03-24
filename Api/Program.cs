@@ -1,5 +1,6 @@
 
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 using Api.Handlers;
 using Api.Services;
 using Api.Services.Security;
@@ -60,6 +61,25 @@ services.AddMediator(mediator =>
                 IssuerSigningKey = key,
                 ValidateIssuer = false,
                 ValidateAudience = false
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value
+                        ?? context.Principal?.FindFirst("jti")?.Value;
+
+                    if (string.IsNullOrWhiteSpace(jti))
+                        return Task.CompletedTask;
+
+                    var revocationService = context.HttpContext.RequestServices
+                        .GetRequiredService<ITokenRevocationService>();
+
+                    if (revocationService.IsRevoked(jti))
+                        context.Fail("Token has been revoked.");
+
+                    return Task.CompletedTask;
+                }
             };
         });
 services.AddAuthorization();

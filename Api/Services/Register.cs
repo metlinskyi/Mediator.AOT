@@ -7,6 +7,8 @@ public static class Register
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISecurityService, SecurityService>();
+        services.AddSingleton<ITokenRevocationService, TokenRevocationService>();
+        services.AddHttpContextAccessor();
 
         return services;
     }
