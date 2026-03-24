@@ -50,7 +50,7 @@ public class MediatorServiceTests
             new PingRequest("world"),
             TestJsonSerializerContext.Default.PingRequest));
 
-        await mediator.Send((HttpMethod.Post, "pingrequest"), httpContext, CancellationToken.None);
+        await mediator.Send((HttpMethod.Post, "pingrequest".ToUpper()), httpContext, CancellationToken.None);
 
         httpContext.Response.Body.Position = 0;
         var response = await JsonSerializer.DeserializeAsync(
@@ -73,14 +73,14 @@ public class MediatorServiceTests
 
         var httpContext = CreateHttpContext(scope.ServiceProvider, "{}"u8.ToArray());
 
-        await mediator.Send((HttpMethod.Post, "DoesNotExist"), httpContext, CancellationToken.None);
+        await mediator.Send((HttpMethod.Post, "DoesNotExist".ToUpper()), httpContext, CancellationToken.None);
 
         httpContext.Response.Body.Position = 0;
         using var reader = new StreamReader(httpContext.Response.Body, Encoding.UTF8, leaveOpen: true);
         var body = await reader.ReadToEndAsync();
 
         Assert.That(httpContext.Response.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
-        Assert.That(body, Is.EqualTo("No handler registered for 'DoesNotExist'."));
+        Assert.That(body, Is.EqualTo("No handler registered for 'DOESNOTEXIST'."));
     }
 
     [Test]
