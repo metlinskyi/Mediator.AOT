@@ -5,6 +5,7 @@ public static class Register
 {
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ISecurityService, SecurityService>();
 
         return services;
