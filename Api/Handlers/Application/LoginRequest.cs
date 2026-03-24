@@ -1,5 +1,5 @@
 using System.Security;
 
-namespace Api.Handlers.Auth;
+namespace Api.Handlers.Application;
 
 public record LoginRequest(string Username, SecureString Password);

@@ -1,6 +1,6 @@
 using Api.Services.Security;
 
-namespace Api.Handlers.Auth;
+namespace Api.Handlers.Application;
 
 public class LoginHandler(
     ILogger<LoginHandler> logger,

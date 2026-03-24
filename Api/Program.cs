@@ -1,4 +1,3 @@
-global using Mediator.Handlers;
 
 using System.Text;
 using Api.Handlers;
@@ -7,7 +6,6 @@ using Api.Services.Security;
 using Mediator.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var config = builder.Configuration;

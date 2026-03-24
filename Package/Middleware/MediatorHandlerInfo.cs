@@ -2,5 +2,5 @@ namespace Mediator.Middleware;
 
 internal record MediatorHandlerInfo (
     Type RequestType,
-    Type ResponseType
+    Type? ResponseType = null
 ) : IMediatorHandlerInfo;

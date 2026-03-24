@@ -24,7 +24,7 @@ public class MediatorServiceTests
             new PingRequest("hi"),
             TestJsonSerializerContext.Default.PingRequest));
 
-        await mediator.Send("PingRequest", httpContext, CancellationToken.None);
+        await mediator.Send((HttpMethod.Post, "PingRequest".ToUpper()), httpContext, CancellationToken.None);
 
         httpContext.Response.Body.Position = 0;
         var response = await JsonSerializer.DeserializeAsync(
@@ -50,7 +50,7 @@ public class MediatorServiceTests
             new PingRequest("world"),
             TestJsonSerializerContext.Default.PingRequest));
 
-        await mediator.Send("pingrequest", httpContext, CancellationToken.None);
+        await mediator.Send((HttpMethod.Post, "pingrequest"), httpContext, CancellationToken.None);
 
         httpContext.Response.Body.Position = 0;
         var response = await JsonSerializer.DeserializeAsync(
@@ -73,7 +73,7 @@ public class MediatorServiceTests
 
         var httpContext = CreateHttpContext(scope.ServiceProvider, "{}"u8.ToArray());
 
-        await mediator.Send("DoesNotExist", httpContext, CancellationToken.None);
+        await mediator.Send((HttpMethod.Post, "DoesNotExist"), httpContext, CancellationToken.None);
 
         httpContext.Response.Body.Position = 0;
         using var reader = new StreamReader(httpContext.Response.Body, Encoding.UTF8, leaveOpen: true);
@@ -104,9 +104,9 @@ public class MediatorServiceTests
         mediator.Register<PingRequest, PingResponse, PingHandler>(TestJsonSerializerContext.Default);
 
         var infos = new List<IMediatorHandlerInfo>();
-        await mediator.AddSchema(info =>
+        await mediator.AddSchema((opt, info) =>
         {
-            infos.Add(info);
+            infos.Add(info.First());
             return Task.CompletedTask;
         });
 

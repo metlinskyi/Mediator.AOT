@@ -4,5 +4,5 @@ namespace Mediator.Middleware;
 
 public interface IMediator 
 {
-   Task Send(string className, HttpContext ctx, CancellationToken ct);
+   Task Send((HttpMethod, string) key, HttpContext ctx, CancellationToken ct);
 }

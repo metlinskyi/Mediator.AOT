@@ -13,4 +13,9 @@ public interface IMediatorRegister
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(
             JsonSerializerContext context)
             where THandler : IRequestHandler<TRequest, TResponse>;
+
+      void Register<TRequest,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] THandler>(
+            JsonSerializerContext context)
+            where THandler : IRequestHandler<TRequest>;
 }

@@ -31,16 +31,29 @@ public static class MediatorHelper
 
         app.MapPost(options.SendPattern, async ctx =>
         {
-            var className = ctx.Request.RouteValues["className"]?.ToString();
-            if (string.IsNullOrWhiteSpace(className))
-            {
-                ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-                await ctx.Response.WriteAsync("Route parameter 'className' is required.", ctx.RequestAborted);
-                return;
-            }
-
-            await mediator.Send(className, ctx, ctx.RequestAborted);
+            var className = await ctx.GetClassNameFromRoute();
+            if (className is null) return;
+            await mediator.Send((HttpMethod.Post, className.ToUpper()), ctx, ctx.RequestAborted);
         });
+
+        app.MapPut(options.SendPattern, async ctx =>
+        {
+            var className = await ctx.GetClassNameFromRoute();
+            if (className is null) return;
+            await mediator.Send((HttpMethod.Put, className.ToUpper()), ctx, ctx.RequestAborted);
+        });
+    }
+
+    private static async Task<string?> GetClassNameFromRoute(this HttpContext ctx)
+    {
+        var className = ctx.Request.RouteValues["className"]?.ToString();
+        if (string.IsNullOrWhiteSpace(className))
+        {
+            ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await ctx.Response.WriteAsync("Route parameter 'className' is required.", ctx.RequestAborted);
+            return null;
+        }
+        return className;
     }
 
     public static async Task AddSchema(this IMediatorRegister register, 
