@@ -1,6 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace Mediator.Middleware;
 
-internal record MediatorHandlerInfo (
+internal record MediatorHandlerInfo(
     Type RequestType,
     Type? ResponseType = null
-) : IMediatorHandlerInfo;
+) : IMediatorHandlerInfo
+{
+    public IAuthorizeData[] AuthorizeData {get; init;} = Array.Empty<IAuthorizeData>();
+}

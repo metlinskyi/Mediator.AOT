@@ -3,8 +3,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Mediator.Handlers;
 using Mediator.Middleware;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace Tests;
 
@@ -115,6 +117,54 @@ public class MediatorServiceTests
         Assert.That(infos[0].ResponseType, Is.EqualTo(typeof(PingResponse)));
     }
 
+    [Test]
+    public async Task Send_WithAuthorizeHandler_AnonymousUser_Returns401()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddAuthorization();
+
+        var mediator = new MediatorService(services);
+        mediator.Register<PingRequest, PingResponse, ProtectedPingHandler>(TestJsonSerializerContext.Default);
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var httpContext = CreateHttpContext(scope.ServiceProvider, JsonSerializer.SerializeToUtf8Bytes(
+            new PingRequest("secret"),
+            TestJsonSerializerContext.Default.PingRequest));
+
+        await mediator.Send((HttpMethod.Post, "PINGREQUEST"), httpContext, CancellationToken.None);
+
+        Assert.That(httpContext.Response.StatusCode, Is.EqualTo(StatusCodes.Status401Unauthorized));
+    }
+
+    [Test]
+    public async Task Send_WithRoleProtectedHandler_MissingRole_Returns403()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddAuthorization();
+
+        var mediator = new MediatorService(services);
+        mediator.Register<PingRequest, PingResponse, AdminOnlyPingHandler>(TestJsonSerializerContext.Default);
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var httpContext = CreateHttpContext(scope.ServiceProvider, JsonSerializer.SerializeToUtf8Bytes(
+            new PingRequest("secret"),
+            TestJsonSerializerContext.Default.PingRequest));
+        httpContext.User = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                [new Claim(ClaimTypes.Name, "user")],
+                authenticationType: "TestAuth"));
+
+        await mediator.Send((HttpMethod.Post, "PINGREQUEST"), httpContext, CancellationToken.None);
+
+        Assert.That(httpContext.Response.StatusCode, Is.EqualTo(StatusCodes.Status403Forbidden));
+    }
+
     private static DefaultHttpContext CreateHttpContext(IServiceProvider requestServices, byte[] requestBody)
     {
         var httpContext = new DefaultHttpContext
@@ -136,6 +186,20 @@ public class MediatorServiceTests
     {
         public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
             => Task.FromResult(new PingResponse($"Echo:{request.Message}"));
+    }
+
+    [Authorize]
+    private sealed class ProtectedPingHandler : IRequestHandler<PingRequest, PingResponse>
+    {
+        public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
+            => Task.FromResult(new PingResponse($"Protected:{request.Message}"));
+    }
+
+    [Authorize(Roles = "Admin")]
+    private sealed class AdminOnlyPingHandler : IRequestHandler<PingRequest, PingResponse>
+    {
+        public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
+            => Task.FromResult(new PingResponse($"Admin:{request.Message}"));
     }
 }
 
