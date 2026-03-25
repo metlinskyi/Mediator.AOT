@@ -10,7 +10,6 @@ public static class MediatorHelper
     {
         var mediator = new MediatorService(services);
         services.AddSingleton<IMediator>(mediator);
-        services.AddSingleton<IMediatorRegister>(mediator);
         configure?.Invoke(mediator);
         
         services.ConfigureHttpJsonOptions(options =>
