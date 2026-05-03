@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Mediator.Handlers;
-using Mediator.Middleware;
+using Happy.Endpoint.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using Happy.Endpoint.Interfaces;
 
 namespace Tests;
 
@@ -16,7 +16,7 @@ public class MediatorServiceTests
     public async Task Send_WithRegisteredHandler_ReturnsSerializedResponse()
     {
         var services = new ServiceCollection();
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
         mediator.Register<PingRequest, PingResponse, PingHandler>(TestJsonSerializerContext.Default);
 
         using var provider = services.BuildServiceProvider();
@@ -42,7 +42,7 @@ public class MediatorServiceTests
     public async Task Send_ClassNameLookup_IsCaseInsensitive()
     {
         var services = new ServiceCollection();
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
         mediator.Register<PingRequest, PingResponse, PingHandler>(TestJsonSerializerContext.Default);
 
         using var provider = services.BuildServiceProvider();
@@ -68,7 +68,7 @@ public class MediatorServiceTests
     public async Task Send_WithUnknownClassName_Returns404AndMessage()
     {
         var services = new ServiceCollection();
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
 
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -89,7 +89,7 @@ public class MediatorServiceTests
     public void Register_WithoutTypeMetadata_ThrowsInvalidOperationException()
     {
         var services = new ServiceCollection();
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
             mediator.Register<PingRequest, PingResponse, PingHandler>(
@@ -102,13 +102,16 @@ public class MediatorServiceTests
     public async Task AddSchema_EnumeratesRegisteredHandlerInfos()
     {
         var services = new ServiceCollection();
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
         mediator.Register<PingRequest, PingResponse, PingHandler>(TestJsonSerializerContext.Default);
 
-        var infos = new List<IMediatorHandlerInfo>();
+        var infos = new List<EndpointInfo>();
         await mediator.AddSchema((opt, info) =>
         {
-            infos.Add(info.First());
+            if(info.First() is EndpointInfo endpointInfo)
+            {
+                infos.Add(endpointInfo);
+            }
             return Task.CompletedTask;
         });
 
@@ -124,7 +127,7 @@ public class MediatorServiceTests
         services.AddLogging();
         services.AddAuthorization();
 
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
         mediator.Register<PingRequest, PingResponse, ProtectedPingHandler>(TestJsonSerializerContext.Default);
 
         using var provider = services.BuildServiceProvider();
@@ -146,7 +149,7 @@ public class MediatorServiceTests
         services.AddLogging();
         services.AddAuthorization();
 
-        var mediator = new MediatorService(services);
+        var mediator = new MiddlewareService(services);
         mediator.Register<PingRequest, PingResponse, AdminOnlyPingHandler>(TestJsonSerializerContext.Default);
 
         using var provider = services.BuildServiceProvider();
@@ -182,21 +185,21 @@ public class MediatorServiceTests
 
     public sealed record PingResponse(string Message);
 
-    private sealed class PingHandler : IRequestHandler<PingRequest, PingResponse>
+    private sealed class PingHandler : IHappy.Endpoint<PingRequest, PingResponse>
     {
         public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
             => Task.FromResult(new PingResponse($"Echo:{request.Message}"));
     }
 
     [Authorize]
-    private sealed class ProtectedPingHandler : IRequestHandler<PingRequest, PingResponse>
+    private sealed class ProtectedPingHandler : IHappy.Endpoint<PingRequest, PingResponse>
     {
         public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
             => Task.FromResult(new PingResponse($"Protected:{request.Message}"));
     }
 
     [Authorize(Roles = "Admin")]
-    private sealed class AdminOnlyPingHandler : IRequestHandler<PingRequest, PingResponse>
+    private sealed class AdminOnlyPingHandler : IHappy.Endpoint<PingRequest, PingResponse>
     {
         public Task<PingResponse> Handle(PingRequest request, CancellationToken cancellationToken)
             => Task.FromResult(new PingResponse($"Admin:{request.Message}"));
