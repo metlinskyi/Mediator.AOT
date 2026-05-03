@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace Mediator.Middleware;
+namespace Happy.Endpoint.Middleware;
 
-internal record MediatorHandlerInfo(
+internal record EndpointInfo(
     HttpMethod Method,
     Type RequestType,
     Type? ResponseType = null
-) : IMediatorHandlerInfo
+) : IHappy.EndpointInfo
 {
     public IAuthorizeData[] AuthorizeData {get; init;} = Array.Empty<IAuthorizeData>();
 }

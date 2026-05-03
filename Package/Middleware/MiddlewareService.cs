@@ -1,18 +1,18 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
-namespace Mediator.Middleware;
+namespace Happy.Endpoint.Middleware;
 
-internal sealed partial class MediatorService : 
+internal sealed partial class MiddlewareService : 
     Dictionary<(HttpMethod, string), Func<IServiceProvider, HttpContext, CancellationToken, Task>>, 
-    IMediator
+    IHappy.MiddlewareService
 {
     private readonly IServiceCollection services;
-    private readonly List<IMediatorHandlerInfo> handlerInfos = new List<IMediatorHandlerInfo>();
+    private readonly List<EndpointInfo> endpoints = [];
     public List<JsonSerializerContext> JsonSerializerContexts { get; } = new List<JsonSerializerContext>();
-    public IEnumerable<IMediatorHandlerInfo> HandlerInfos => handlerInfos;
-    public MediatorOptions Options { get; } = new MediatorOptions();
-    public MediatorService(IServiceCollection services) : base()
+    public EndpointMappingOptions Options { get; } = new();
+    
+    public MiddlewareService(IServiceCollection services) : base()
     {
         this.services = services;
     }

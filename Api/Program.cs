@@ -1,29 +1,27 @@
-
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Api.Handlers;
 using Api.Services;
 using Api.Services.Security;
-using Mediator.Middleware;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Happy.Endpoint.Middleware;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var config = builder.Configuration;
 var services = builder.Services;
 var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config["Jwt:Key"]!));
 
-services.AddMediator(mediator =>
+services.AddHappyEndpoints(mediator =>
         {
-            mediator.RegisterHandlers();
+            mediator.EndpointsCollection();
         })
         .AddOpenApi(options =>
         {
             options.AddDocumentTransformer(async (document, context, ct) =>
             {
-                 
                 await context.ApplicationServices
-                    .GetRequiredService<IMediatorRegister>()
+                    .GetRequiredService<IHappy.Middleware>()
                     .AddSchema(async (options, infos) =>
                     {   
                         var path = new Microsoft.OpenApi.OpenApiPathItem();
@@ -91,6 +89,6 @@ app
     .UseAuthentication()
     .UseAuthorization();
     
-app.MapMediator();
+app.MapHappyEndpoints();
 app.MapOpenApi();
 app.Run();

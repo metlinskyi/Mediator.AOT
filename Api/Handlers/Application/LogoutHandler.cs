@@ -9,7 +9,7 @@ public class LogoutHandler(
     ILogger<LogoutHandler> logger,
     IHttpContextAccessor httpContextAccessor,
     ITokenRevocationService tokenRevocationService
-    ) : IRequestHandler<LogoutRequest>
+    ) : IHappy.Endpoint<LogoutRequest>
 {
     public Task Handle(LogoutRequest request, CancellationToken cancellationToken)
     {

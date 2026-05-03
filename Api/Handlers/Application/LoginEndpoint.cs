@@ -7,7 +7,7 @@ public class LoginHandler(
     ILogger<LoginHandler> logger,
     IAuthService authService,
     ISecurityService securityService
-    ) : IRequestHandler<LoginRequest, LoginResponse>
+    ) : IHappy.Endpoint<LoginRequest, LoginResponse>
 {
     public Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {

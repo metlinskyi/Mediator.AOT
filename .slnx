@@ -3,7 +3,7 @@
     <Project Path="Api/Api.csproj" />
   </Folder>
   <Folder Name="/Package/">
-    <Project Path="Package/Mediator.csproj" />
+    <Project Path="Package/Package.csproj" />
   </Folder>
   <Project Path="Tests/Tests.csproj" />
 </Solution>

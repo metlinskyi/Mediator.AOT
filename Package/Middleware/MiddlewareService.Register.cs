@@ -3,11 +3,11 @@ using System.Text.Json.Serialization.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
-namespace Mediator.Middleware;
+namespace Happy.Endpoint.Middleware;
 
-internal sealed partial class MediatorService : IMediatorRegister
+internal sealed partial class MiddlewareService : IHappy.Middleware
 {
-    private static async Task<bool> EnsureAuthorizedAsync<THandler>(HttpContext ctx, IMediatorHandlerInfo info)
+    private static async Task<bool> EnsureAuthorizedAsync<THandler>(HttpContext ctx, IHappy.EndpointInfo info)
     {
         if (info.AuthorizeData.Length == 0)
             return true;
@@ -29,26 +29,26 @@ internal sealed partial class MediatorService : IMediatorRegister
     }
 
     public void Register<TRequest, TResponse, THandler>(JsonSerializerContext context)
-        where THandler : IRequestHandler<TRequest, TResponse>
+        where THandler : IHappy.Endpoint<TRequest, TResponse>
     {
         if(!JsonSerializerContexts.Contains(context))
             JsonSerializerContexts.Add(context);
         
-        services.AddScoped(typeof(IRequestHandler<TRequest, TResponse>), typeof(THandler));
+        services.AddScoped(typeof(IHappy.Endpoint<TRequest, TResponse>), typeof(THandler));
         
         var requestTypeInfo = context.GetTypeInfo(typeof(TRequest)) as JsonTypeInfo<TRequest> 
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
         var responseTypeInfo = context.GetTypeInfo(typeof(TResponse)) as JsonTypeInfo<TResponse>
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TResponse).FullName}.");
             
-        var info = new MediatorHandlerInfo(HttpMethod.Post, typeof(TRequest), typeof(TResponse))
+        var info = new EndpointInfo(HttpMethod.Post, typeof(TRequest), typeof(TResponse))
         {
             AuthorizeData = typeof(THandler)
                 .GetCustomAttributes(inherit: true)
                 .OfType<IAuthorizeData>()
                 .ToArray()
         };
-        handlerInfos.Add(info);
+        endpoints.Add(info);
                
         var key = info.CreateKey();
         this[key] = async (sp, ctx, ct) =>
@@ -56,7 +56,7 @@ internal sealed partial class MediatorService : IMediatorRegister
             if (!await EnsureAuthorizedAsync<THandler>(ctx, info))
                 return;
 
-            var handler = sp.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
+            var handler = sp.GetRequiredService<IHappy.Endpoint<TRequest, TResponse>>();
             var request = await ctx.Request.ReadFromJsonAsync(requestTypeInfo, ct);
             if (request is null)
             {
@@ -72,24 +72,24 @@ internal sealed partial class MediatorService : IMediatorRegister
     }
 
     public void Register<TRequest, THandler>(JsonSerializerContext context) 
-        where THandler : IRequestHandler<TRequest>
+        where THandler : IHappy.Endpoint<TRequest>
     {
         if(!JsonSerializerContexts.Contains(context))
             JsonSerializerContexts.Add(context);
         
-        services.AddScoped(typeof(IRequestHandler<TRequest>), typeof(THandler));
+        services.AddScoped(typeof(IHappy.Endpoint<TRequest>), typeof(THandler));
         
         var requestTypeInfo = context.GetTypeInfo(typeof(TRequest)) as JsonTypeInfo<TRequest> 
             ?? throw new InvalidOperationException($"Unable to get JsonTypeInfo for {typeof(TRequest).FullName}.");
  
-        var info = new MediatorHandlerInfo(HttpMethod.Put, typeof(TRequest))
+        var info = new EndpointInfo(HttpMethod.Put, typeof(TRequest))
         {
             AuthorizeData = typeof(THandler)
                 .GetCustomAttributes(inherit: true)
                 .OfType<IAuthorizeData>()
                 .ToArray()
         };
-        handlerInfos.Add(info);
+        endpoints.Add(info);
 
         var key = info.CreateKey();
         this[key] = async (sp, ctx, ct) =>
@@ -97,7 +97,7 @@ internal sealed partial class MediatorService : IMediatorRegister
             if (!await EnsureAuthorizedAsync<THandler>(ctx, info))
                 return;
 
-            var handler = sp.GetRequiredService<IRequestHandler<TRequest>>();
+            var handler = sp.GetRequiredService<IHappy.Endpoint<TRequest>>();
             var request = await ctx.Request.ReadFromJsonAsync(requestTypeInfo, ct);
             if (request is null)
             {
@@ -110,13 +110,13 @@ internal sealed partial class MediatorService : IMediatorRegister
         };
     }
 
-    IEnumerator<IMediatorHandlerInfo> IEnumerable<IMediatorHandlerInfo>.GetEnumerator()
+    IEnumerator<IHappy.EndpointInfo> IEnumerable<IHappy.EndpointInfo>.GetEnumerator()
     {
-        return handlerInfos.GetEnumerator();
+        return endpoints.GetEnumerator();
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-        return handlerInfos.GetEnumerator();
+        return endpoints.GetEnumerator();
     }
 }

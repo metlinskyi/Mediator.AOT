@@ -27,6 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Package\Mediator.csproj" />
+    <ProjectReference Include="..\Package\Package.csproj" />
   </ItemGroup> 
 </Project>

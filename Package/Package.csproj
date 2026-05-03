@@ -3,12 +3,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Mediator.AOT</AssemblyName>
-    <PackageId>Mediator.AOT</PackageId>
+    <AssemblyName>Happy.Endpoint.AOT</AssemblyName>
+    <PackageId>Happy.Endpoint.AOT</PackageId>
     <Version>1.0.0</Version>
     <Authors>Roman Metlinskyi</Authors>
-    <Description>AOT-optimized version of the Mediator library.</Description>
-    <RootNamespace>Mediator</RootNamespace>
+    <Description>AOT-optimized version of the API infrastructure library.</Description>
+    <RootNamespace>Happy.Endpoint</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

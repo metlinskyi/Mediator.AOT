@@ -4,9 +4,9 @@ namespace Api.Handlers;
 
 public static class Register
 {
-    public static void RegisterHandlers(this  Mediator.Middleware.IMediatorRegister mediator)
+    public static void EndpointsCollection(this IHappy.Middleware middleware)
     {
-        mediator.Register<LoginRequest, LoginResponse, LoginHandler>(AppJsonSerializerContext.Default);
-        mediator.Register<LogoutRequest, LogoutHandler>(AppJsonSerializerContext.Default);
+        middleware.Register<LoginRequest, LoginResponse, LoginHandler>(AppJsonSerializerContext.Default);
+        middleware.Register<LogoutRequest, LogoutHandler>(AppJsonSerializerContext.Default);
     }
 }

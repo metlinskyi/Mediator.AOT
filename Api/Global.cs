@@ -1,1 +1,1 @@
-global using Mediator.Handlers;
+global using Happy.Endpoint.Interfaces;
