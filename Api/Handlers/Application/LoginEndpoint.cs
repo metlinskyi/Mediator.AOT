@@ -3,8 +3,8 @@ using Api.Services.Security;
 
 namespace Api.Handlers.Application;
 
-public class LoginHandler(
-    ILogger<LoginHandler> logger,
+public class LoginEndpoint(
+    ILogger<LoginEndpoint> logger,
     IAuthService authService,
     ISecurityService securityService
     ) : IHappy.Endpoint<LoginRequest, LoginResponse>

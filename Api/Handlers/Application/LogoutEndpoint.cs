@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Api.Handlers.Application;
 
 [Authorize]
-public class LogoutHandler(
-    ILogger<LogoutHandler> logger,
+public class LogoutEndpoint(
+    ILogger<LogoutEndpoint> logger,
     IHttpContextAccessor httpContextAccessor,
     ITokenRevocationService tokenRevocationService
     ) : IHappy.Endpoint<LogoutRequest>
