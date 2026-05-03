@@ -26,3 +26,9 @@ Happy.Endpoint.AOT is a lightweight .NET library that implements the Mediator pa
 ## Usage
 
 Refer to the Api project for example implementations of mediators and endpoints.
+
+### Docker
+```bash
+docker build -t api -f ".dockerfile" .
+docker run -p 8080:8080 api
+```
