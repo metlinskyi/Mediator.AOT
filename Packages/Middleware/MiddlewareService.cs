@@ -22,7 +22,7 @@ internal sealed partial class MiddlewareService :
         if (!TryGetValue(key, out var handle))
         {
             ctx.Response.StatusCode = StatusCodes.Status404NotFound;
-            await ctx.Response.WriteAsync($"No handler registered for '{key.Item2}'.", ct);
+            await ctx.Response.WriteAsync($"Endpoint '{key.Item2}' not found.", ct);
             return;
         }
         await handle(ctx.RequestServices, ctx, ct);

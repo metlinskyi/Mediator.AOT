@@ -9,4 +9,5 @@ internal record EndpointInfo(
 ) : IHappy.EndpointInfo
 {
     public IAuthorizeData[] AuthorizeData {get; init;} = Array.Empty<IAuthorizeData>();
+    
 }

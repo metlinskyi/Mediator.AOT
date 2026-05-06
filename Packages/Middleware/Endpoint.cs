@@ -4,15 +4,29 @@ using Microsoft.AspNetCore.Http;
 
 namespace Happy.Endpoint.Middleware;
 
-internal class Endpoint<TRequest, TResponse> 
+internal abstract class Endpoint(EndpointInfo info)
 {
-    protected readonly EndpointInfo info;
+    protected readonly EndpointInfo info = info;
+
+    public override int GetHashCode()
+    {
+        return CreateKey().GetHashCode();
+    }
+
+    public (HttpMethod, string) CreateKey()
+    {
+        return (info.Method, info.RequestType.Name.ToUpper());
+    }
+}
+
+internal class Endpoint<TRequest, TResponse> : Endpoint
+{
     protected readonly JsonTypeInfo<TRequest> requestTypeInfo;
     protected readonly JsonTypeInfo<TResponse> responseTypeInfo;
 
     public Endpoint(EndpointInfo info, JsonTypeInfo<TRequest> requestTypeInfo, JsonTypeInfo<TResponse> responseTypeInfo)
+            : base(info)
     {
-        this.info = info;
         this.requestTypeInfo = requestTypeInfo;
         this.responseTypeInfo = responseTypeInfo;
     }

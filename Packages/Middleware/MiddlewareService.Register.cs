@@ -29,9 +29,7 @@ internal sealed partial class MiddlewareService : IHappy.Middleware
         endpoints.Add(info);
 
         var endpoint = new Endpoint<TRequest, TResponse>(info, requestTypeInfo, responseTypeInfo);
-               
-        var key = info.CreateKey();
-        this[key] = endpoint.Handle;
+        this[endpoint.CreateKey()] = endpoint.Handle;
     }
 
     public void Register<TRequest, THandler>(JsonSerializerContext context) 
@@ -55,9 +53,7 @@ internal sealed partial class MiddlewareService : IHappy.Middleware
         endpoints.Add(info);
 
         var endpoint = new Endpoint<TRequest>(info, requestTypeInfo);
-
-        var key = info.CreateKey();
-        this[key] = endpoint.Handle;
+        this[endpoint.CreateKey()] = endpoint.Handle;
     }
 
     IEnumerator<IHappy.EndpointInfo> IEnumerable<IHappy.EndpointInfo>.GetEnumerator()

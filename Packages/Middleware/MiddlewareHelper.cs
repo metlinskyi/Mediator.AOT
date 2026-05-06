@@ -4,11 +4,6 @@ namespace Happy.Endpoint.Middleware;
         
 internal static class MiddlewareHelper
 {
-    public static (HttpMethod, string) CreateKey(this IHappy.EndpointInfo info)
-    {
-        return (info.Method, info.RequestType.Name.ToUpper());
-    }
-
     public static async Task<string?> GetClassNameFromRoute(this HttpContext ctx, EndpointMappingOptions options)
     {
         var className = ctx.Request.RouteValues[options.RouteTag]?.ToString();
