@@ -27,6 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Package\Package.csproj" />
+    <ProjectReference Include="..\Packages\Package.csproj" />
   </ItemGroup> 
 </Project>

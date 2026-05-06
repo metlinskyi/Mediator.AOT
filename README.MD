@@ -14,7 +14,7 @@ Happy.Endpoint.AOT is a lightweight .NET library that implements the Mediator pa
 ## Project Structure
 
 - **Api/**: An example ASP.NET Core API project demonstrating the mediator usage, including login/logout endpoints and security services.
-- **Package/**: The core library containing interfaces (e.g., IHappy.Endpoint, IHappy.Middleware) and implementations for mediators, middleware, and endpoint handling.
+- **Packages/**: The core library containing interfaces (e.g., IHappy.Endpoint, IHappy.Middleware) and implementations for mediators, middleware, and endpoint handling.
 - **Tests/**: Unit tests for validating the library functionality.
 
 ## Getting Started

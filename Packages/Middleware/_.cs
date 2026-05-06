@@ -43,7 +43,6 @@ public static class _
     public static async Task AddSchema(this IHappy.Middleware middleware, 
         Func<EndpointMappingOptions, IEnumerable<IHappy.EndpointInfo>, Task> configure)
     {
-        
         await configure(middleware.Options, middleware);
     }  
 }
